@@ -1,0 +1,96 @@
+////template block: head_block starts
+
+
+
+//`include "uvm_macros.svh"
+//import uvm_pkg::*;
+
+
+////template block: head_block ends
+
+class monitor1 extends uvm_monitor #(undefined); 
+    virtual my_if vif;//this is default if 
+ ////template block: variable_block starts
+
+
+// temp_obj variable;
+// ....
+
+
+////template block: variable_block ends
+
+   extern function new (string name, uvm_component parent)   extern virtual function void build_phase(uvm_phase phase);   extern virtual task main_phase(uvm_phase phase);
+
+////template block: func_decl_block starts
+
+
+//extern task func_1();
+   extern task receive_one_pkt(ref my_transaction get_pkt);
+   extern task get_one_byte(ref logic valid, ref logic [7:0] data);
+
+////template block: func_decl_block ends
+
+   `uvm_component_utils(monitor1) 
+ endclass // monitor 
+  
+function monitor1::new(string name, uvm_component parent); 
+    super.new(name, parent);
+
+////template block: new_component starts
+
+
+// variable = new();
+
+
+////template block: new_component ends
+
+endfunction // new 
+  
+ function void monitor1::build_phase(uvm_phase phase); 
+  super.build_phase(phase); 
+    if(!uvm_config_db#(virtual my_if)::get(this, "", "my_if", vif)) 
+       `uvm_fatal("my_monitor", "Error in Getting interface"); 
+ ////template block: build_phase starts
+
+
+// uvm_config_db::get(...)(...);
+
+
+////template block: build_phase ends
+
+endfunction
+
+ 
+ task  monitor1::main_phase(uvm_phase phase); 
+    super.main_phase(phase); 
+ ////template block: main_phase starts
+
+
+//  my_transaction tr;
+//  super.main_phase(phase);
+//
+//  logic valid;
+//  logic [7:0] data;
+//
+//  while(1) begin
+//    tr = new();
+//    receive_one_pkt(tr);
+//    ap.write(tr);
+//  end
+
+
+////template block: main_phase ends
+
+endtask 
+
+////template block: func_def_block starts
+
+
+// task my_monitor::func_1();
+// ...
+// endtask
+
+
+
+////template block: func_def_block ends
+
