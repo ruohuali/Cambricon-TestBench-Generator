@@ -1,15 +1,12 @@
 <h1 align="center">Cambricon TestBench Generator</h1>
-<hr>
-
+<br>
 <p style="font-size:18px; font-family:arial;"><i>Cambricon TestBench Generator</i> 是一款基于vscode开发用于UVM验证平台环境生成的</p>
 <p style="font-size:18px;">webview拓展，可以使用户在vscode中通过设计UI界面自动生成对应的UVM验证环境</p>
-<br>
 <br>
 
 <br>
 <div id="menu" style="background-color:lightblue; height:1000px;width:400px; float:left;">
 <h2>UI界面</h2>
-<br>
 <br>
 
 <p style="font-size:17px;">UI界面分为:<br>
@@ -68,4 +65,4 @@ class定义中被declare
 </div>
 
 
-<!-- <img src="divcss5-logo-201305.gif" width="165" height="60" /> -->
+<img src="https://github.com/ruohuali/Cambricon-TestBench-Generator/blob/master/Demo_snapshots/Demo_snapshots.txt" width="165" height="60" />
