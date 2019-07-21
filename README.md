@@ -29,7 +29,7 @@ Component/Object<br>被封装在当前Group中)<br>
 通过属性键UI会弹出当前Node的各项<b>属性</b><br>
 </p>
 
-<div align="right"><img src="https://github.com/ruohuali/Cambricon-TestBench-Generator/blob/master/Demo_snapshots/Demo1.PNG" /></div> 
+<img src="https://github.com/ruohuali/Cambricon-TestBench-Generator/blob/master/Demo_snapshots/Demo1.PNG" align="right"/>
 
 
 <p style="font-size:14px">
