@@ -5,6 +5,7 @@
 <br>
 <br>
 
+
 <div id="menu" style="background-color:lightblue; height:1000px;width:400px; float:left;">
 <h2>UI界面</h2>
 <br>
@@ -15,7 +16,6 @@
 <i style="font-size:15px;">·交互按钮<br></i>
 </p>
 <br>
-
 <p style="font-size:15px;"><i>操作平台 </i>允许用户对UI进行设计和调整
 <p style="font-size:15px;">操作平台的基本元素为<b>Node, Group, Link, Port</b></p>
 <p style="font-size:14px;">
@@ -29,6 +29,9 @@ Component/Object<br>被封装在当前Group中)<br>
 通过属性键UI会弹出当前Node的各项<b>属性</b><br>
 </p>
 
+<div align="right"><img src="https://github.com/ruohuali/Cambricon-TestBench-Generator/blob/master/Demo_snapshots/Demo1.PNG" /></div> 
+
+
 <p style="font-size:14px">
 <b>Port</b>
 <br>
@@ -41,8 +44,6 @@ class定义中被declare
 在Node上添加<b>Tr Port</b>并用Link 与相应的Transaction Node相连并右键Link选择Config Tr表示该Transaction会在Node中配置(详细操作见Link说明)
 </p>
 
-</p>
-
 <p style="font-size:14px">
 <b>Link</b>
 <br>
@@ -51,17 +52,13 @@ class定义中被declare
 然后需要右键定义Link的<b>属性</b>
 <br>
 <b style="font-size:20px">·</b> 如果Link是<u>从一个Component A的TLM Port连接至另一个Component B的TLM Port</u>，则表示两者之间建立了由A到B的TLM通讯，
-
 需要在外观新建后右键该Link选择此TLM通讯的类型然后右键选择定义<b>TLM Transaction</b>并输入一个transaction名做为该通讯的transaction
 <br>
 <b style="font-size:20px">·</b> 如果Link是<u>从Transaction自带的Port拖拽至Component的Tr Port</u>, 则说明要将该Transaction配置给Component，需要在新建外观后右键Link点击<b>Config Tr</b>表明Link类型
 <br>
 <b>·</b> 如果Link<u>是从Interface自带的Port拖拽至Component的If Port</u>, 则说明要将该Interface配置给Component，需要在新建外观后右键Link点击<b>Config If</b>表明Link类型
-
 </p>
 
 
+
 </div>
-
-
-<div align="right"><img src="https://github.com/ruohuali/Cambricon-TestBench-Generator/blob/master/Demo_snapshots/Demo1.PNG" /></div> 
