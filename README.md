@@ -64,4 +64,4 @@ class定义中被declare
 </div>
 
 
-<img src="https://github.com/ruohuali/Cambricon-TestBench-Generator/blob/master/Demo_snapshots/Demo1.PNG" width="165" height="100" style="float:right;"/>
+<div align="center"><img src="https://github.com/ruohuali/Cambricon-TestBench-Generator/blob/master/Demo_snapshots/Demo1.PNG" /></div> 
