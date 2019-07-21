@@ -68,19 +68,4 @@ class定义中被declare
 </div>
 
 
-
-
-
-
-
-<div id="content" style="background-color:#EEEEEE;height:150px;width:300px;float:left;">
-内容在这里</div>
-
-<div id="content" style="background-color:#EEEEEE;height:150px;width:300px;float:left;">
-内容在na里</div>
-
-<div id="content" style="background-color:#EEEEEE;height:150px;width:300px;float:left;">
-内容在这里</div>
-
-<div id="content" style="background-color:#EEEEEE;height:150px;width:300px;float:left;">
-内容在这里</div>
+<!-- <img src="divcss5-logo-201305.gif" width="165" height="60" /> -->
