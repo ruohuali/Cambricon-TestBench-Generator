@@ -9,7 +9,7 @@
 <h2>UI界面</h2>
 <br>
  
- <img src="https://github.com/ruohuali/Cambricon-TestBench-Generator/blob/master/Demo_snapshots/Demo_main_page.gif" align="right" width="600px" height="333px"/>
+ <img src="https://github.com/ruohuali/Cambricon-TestBench-Generator/blob/master/Demo_snapshots/Demo_main_page.gif" align="right" width="500px" height="277px"/>
  
 <p style="font-size:17px;">UI界面分为:<br>
 <br>
@@ -96,6 +96,8 @@ class定义中被declare
 e.g. 如果当前UI中一Component 名为”monitor_1”那么如果在用户指定的路径下有文件名为 ”monitor_1.sv” 的文件那么在所有”monitor_1.sv”的template block中的修改都会被继承到新的monitor_1的生成文件中
 <br>
 此功能是为了方便用户在用一个UI生成环境并在环境文件上做编辑后又用相同UI经过进一步调整后生成文件时，可以直接套用上次对该名字的环境文件的修改
+
+(注意在Export前必须先点击Specify a template path，template path可以为空)
 </p>
 
 
