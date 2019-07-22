@@ -116,7 +116,6 @@ e.g. 如果当前UI中一Component 名为”monitor_1”那么如果在用户指
 <br>
 
 <h2>开发工具 & 后续拓展</h2>
-<br>
 <p style="font-size:14px">
  Cambricon TestBench Generator是利用vscode extension开发工具的webview extension实现的(类似于iframe)，
  UI生成利用了javascript的GoJS框架，
