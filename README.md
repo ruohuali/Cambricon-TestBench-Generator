@@ -59,6 +59,30 @@ class定义中被declare
 <b>·</b> 如果Link<u>是从Interface自带的Port拖拽至Component的If Port</u>, 则说明要将该Interface配置给Component，需要在新建外观后右键Link点击<b>Config If</b>表明Link类型
 </p>
 
+<br>
+
+<p style="font-size:15px"><i>属性查看器</i>允许用户查看并定义一个Node/Link的外观属性</p>
+<br>
+
+<p style="font-size:15px"><i>交互按钮</i>分为<b>Save UI</b>, <b>Load UI</b>, <b>Export Environment</b></p>
+<p style="font-size:14px"><b>Save UI</b>允许用户将当前UI保存为json文件至用户自选路径并命名</p>
+<p style="font-size:14px"><b>Load UI</b>分为Load, Load & Combine, Load & Insert, Load & Merge</p>
+<p style="font-size:14px">
+
+<b style="font-size:20px">·</b> <b>Load </b>键会用指定UI文件覆盖当前UI
+<br>
+<b style="font-size:20px">·</b> <b>Load & Combine </b>键会将当前UI与指定UI文件一起放入一个Combined_Env Group
+<br>
+<b>·</b> <b>Load & Merge </b>键会将指定UI 最大Env内的所有内容直接放入当前UI的最大Env中
+</p>
+
+<p style="font-size:14px"><b>Export </b>键会将当前的UI生成为相应的验证环境
+<>br>
+具体文件结构为:
+</p>
+
+
+
 
 
 </div>
