@@ -108,7 +108,7 @@ e.g. 如果当前UI中一Component 名为”monitor_1”那么如果在用户指
 <br>
 <br>
 
-<h2>UI文件结构</h2>
+<h2>生成环境文件结构</h2>
 <p style="font-size:17px;">生成环境的文件结构大致为：
 <img src="https://github.com/ruohuali/Cambricon-TestBench-Generator/blob/master/Demo_snapshots/file_structure.PNG" align="right" width="548px" height="462px"/>
 
