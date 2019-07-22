@@ -90,7 +90,7 @@ class定义中被declare
 <br>
 <b>2.</b> 用户自定义文件模板：路径由用户在生成环境前指定，拓展会自动递归地搜索所有路径下的文件，如果有与当前UI中的Component/Object重名的文件，会以该文件为模板生成文件
 <br>
-<i>e.g. 如果当前UI中一Component 名为”monitor_1”那么如果在用户指定的路径下有文件名为 ”monitor_1.sv” 的文件那么在所有”monitor_1.sv”的template block中的修改都会被继承到新的monitor_1的生成文件中</i>
+e.g. 如果当前UI中一Component 名为”monitor_1”那么如果在用户指定的路径下有文件名为 ”monitor_1.sv” 的文件那么在所有”monitor_1.sv”的template block中的修改都会被继承到新的monitor_1的生成文件中
 <br>
 此功能是为了方便用户在用一个UI生成环境并在环境文件上做编辑后又用相同UI经过进一步调整后生成文件时，可以直接套用上次对该名字的环境文件的修改
 </p>
