@@ -20,7 +20,7 @@
 <p style="font-size:15px;"><i>操作平台 </i>允许用户对UI进行设计和调整
 <p style="font-size:15px;">操作平台的基本元素为<b>Node, Group, Link, Port</b></p>
 <p style="font-size:14px;">
-<b>Node & Group</b><br>
+<b>Node & Group</b>
  
 <img src="https://github.com/ruohuali/Cambricon-TestBench-Generator/blob/master/Demo_snapshots/Demo_ini_node.gif" align="right" width="400px" height="222px"/>
  
