@@ -2,14 +2,13 @@
 <br>
 <p style="font-size:18px; font-family:arial;"><i>Cambricon TestBench Generator</i> 是一款基于vscode开发用于UVM验证平台环境生成的</p>
 <p style="font-size:18px;">webview拓展，可以使用户在vscode中通过设计UI界面自动生成对应的UVM验证环境</p>
-<br>
 
 
 <div id="menu" style="background-color:lightblue; height:1000px;width:400px; float:left;">
 <h2>UI界面</h2>
 <br>
  
- <img src="https://github.com/ruohuali/Cambricon-TestBench-Generator/blob/master/Demo_snapshots/Demo_main_page.gif" align="right" width="500px" height="277px"/>
+ <img src="https://github.com/ruohuali/Cambricon-TestBench-Generator/blob/master/Demo_snapshots/Demo_main_page.gif" align="right" width="450px" height="250px"/>
  
 <p style="font-size:17px;">UI界面分为:<br>
 <br>
@@ -22,6 +21,9 @@
 <p style="font-size:15px;">操作平台的基本元素为<b>Node, Group, Link, Port</b></p>
 <p style="font-size:14px;">
 <b>Node & Group</b><br>
+ 
+<img src="https://github.com/ruohuali/Cambricon-TestBench-Generator/blob/master/Demo_snapshots/Demo_ini_node.gif" align="right" width="450px" height="250px"/>
+ 
 通过在Group中右键并选择相应的<b>新建(uvm_...)</b>对象，<br>用户可以新建多种UVM平台的Object与Component
 <br>
 (在一个Group(代表Agent/Env)中新建Node/Group，表示在生成的环境中被新建的
