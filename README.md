@@ -46,6 +46,8 @@ class定义中被declare
 在Node上添加<b>If Port</b>并用Link 与相应的Interface Node相连并右键Link选择Config If表示该Interface会在Node中例化(详细操作见Link说明)
 <br>
 在Node上添加<b>Tr Port</b>并用Link 与相应的Transaction Node相连并右键Link选择Config Tr表示该Transaction会在Node中配置(详细操作见Link说明)
+<br>
+通过属性键UI会弹出当前Port的各项<b>属性</b><br>
 </p>
 
 <p style="font-size:14px">
@@ -61,6 +63,8 @@ class定义中被declare
 <b style="font-size:20px">·</b> 如果Link是<u>从Transaction自带的Port拖拽至Component的Tr Port</u>, 则说明要将该Transaction配置给Component，需要在新建外观后右键Link点击<b>Config Tr</b>表明Link类型
 <br>
 <b>·</b> 如果Link<u>是从Interface自带的Port拖拽至Component的If Port</u>, 则说明要将该Interface配置给Component，需要在新建外观后右键Link点击<b>Config If</b>表明Link类型
+<br>
+ 通过属性键UI会弹出当前Link的各项<b>属性</b><br>
 </p>
 
 <br>
