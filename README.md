@@ -8,6 +8,9 @@
 <div id="menu" style="background-color:lightblue; height:1000px;width:400px; float:left;">
 <h2>UI界面</h2>
 <br>
+ 
+ <img src="https://github.com/ruohuali/Cambricon-TestBench-Generator/blob/master/Demo_snapshots/Demo_main_page.gif" align="right" width="400px" height="222px"/>
+ 
 <p style="font-size:17px;">UI界面分为:<br>
 <br>
 <i style="font-size:15px;">·操作平台<br></i>
