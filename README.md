@@ -107,9 +107,29 @@ e.g. 如果当前UI中一Component 名为”monitor_1”那么如果在用户指
 
 <br>
 <br>
+
 <h2>UI文件结构</h2>
+<p style="font-size:17px;">生成环境的文件结构大致为：
 <img src="https://github.com/ruohuali/Cambricon-TestBench-Generator/blob/master/Demo_snapshots/file_structure.PNG" align="right" width="548px" height="462px"/>
-<p style="font-size:17px;">生成环境的文件结构大致为：<br>
+
+<br>
+<br>
+
+<h2>开发工具 & 后续拓展</h2>
+<br>
+<p style="font-size:14px">
+ Cambricon TestBench Generator是利用vscode extension开发工具的webview extension实现的(类似于iframe)，
+ UI生成利用了javascript的GoJS框架，
+ 文件生成的过程是是将GoJS的所有的图形属性转化为js下自定义的对象，然后递归地调用文件生成方法
+</p>
+ 
+<p style="font-size:14px">
+TODOs:
+1. 现有的生成文件和转化代码有较多冗余，可以合并增加代码简洁性
+2. 拓展多处时间复杂度不理想，在输入规模较大时可能出现卡顿
+3. 现有的UI多处权限没有设置，用户调整后可能导致错误
+4. 现有UI可生成的种类有限而且部分操作有待优化
+</p>
 
 
 </div>
