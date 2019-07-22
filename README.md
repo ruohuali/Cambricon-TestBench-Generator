@@ -21,6 +21,7 @@
 <p style="font-size:15px;">操作平台的基本元素为<b>Node, Group, Link, Port</b></p>
 <p style="font-size:14px;">
 <b>Node & Group</b>
+<br>
 <img src="https://github.com/ruohuali/Cambricon-TestBench-Generator/blob/master/Demo_snapshots/Demo_ini_node.gif" align="right" width="400px" height="222px"/>
 通过在Group中右键并选择相应的<b>新建(uvm_...)</b>对象，<br>用户可以新建多种UVM平台的Object与Component
 <br>
