@@ -33,7 +33,7 @@ Component/Object<br>被封装在当前Group中)<br>
 通过属性键UI会弹出当前Node的各项<b>属性</b><br>
 </p>
 
-<img src="https://github.com/ruohuali/Cambricon-TestBench-Generator/blob/master/Demo_snapshots/Demo1.PNG" align="right" width="300px" height="166px"/>
+<img src="https://github.com/ruohuali/Cambricon-TestBench-Generator/blob/master/Demo_snapshots/Demo_ini_port.gif" align="right" width="400px" height="222px"/>
 
 
 <p style="font-size:14px">
@@ -42,7 +42,7 @@ Component/Object<br>被封装在当前Group中)<br>
 在Node上添加<b>↑↓←→TLM Port</b>表示该Component/Object用于TLM通讯的Port，会在该Component/Object的
 class定义中被declare
 <br>
-(注意在点击新建一个TLM Port键后会出现弹窗收取用户对于该Port的命名)<br>
+(注意在点击新建一个TLM Port键后会出现弹窗收取用户对于该Port的命名，可以输入空值但是必须回车表示命名结束)<br>
 在Node上添加<b>If Port</b>并用Link 与相应的Interface Node相连并右键Link选择Config If表示该Interface会在Node中例化(详细操作见Link说明)
 <br>
 在Node上添加<b>Tr Port</b>并用Link 与相应的Transaction Node相连并右键Link选择Config Tr表示该Transaction会在Node中配置(详细操作见Link说明)
