@@ -66,11 +66,10 @@ class定义中被declare
 <br>
  通过属性键UI会弹出当前Link的各项<b>属性</b><br>
 </p>
-
+<img src="https://github.com/ruohuali/Cambricon-TestBench-Generator/blob/master/Demo_snapshots/Demo_inspector.gif" align="right" width="400px" height="222px"/>
 <br>
 
 <p style="font-size:15px"><i>属性查看器</i>允许用户查看并定义一个Node/Link的外观属性</p>
-<img src="https://github.com/ruohuali/Cambricon-TestBench-Generator/blob/master/Demo_snapshots/Demo_inspector.gif" align="right" width="400px" height="222px"/>
 <br>
 
 <p style="font-size:15px"><i>交互按钮</i>分为<b>Save UI</b>, <b>Load UI</b>, <b>Export Environment</b></p>
