@@ -9,7 +9,7 @@
 <h2>UI界面</h2>
 <br>
  
- <img src="https://github.com/ruohuali/Cambricon-TestBench-Generator/blob/master/Demo_snapshots/Demo_main_page.gif" align="right" width="400px" height="222px"/>
+ <img src="https://github.com/ruohuali/Cambricon-TestBench-Generator/blob/master/Demo_snapshots/Demo_main_page.gif" align="right" width="600px" height="333px"/>
  
 <p style="font-size:17px;">UI界面分为:<br>
 <br>
