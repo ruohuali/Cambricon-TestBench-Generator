@@ -51,6 +51,7 @@ class定义中被declare
 
 <p style="font-size:14px">
 <b>Link</b>
+ <img src="https://github.com/ruohuali/Cambricon-TestBench-Generator/blob/master/Demo_snapshots/Demo_ini_port.gif" align="right" width="400px" height="222px"/>
 <br>
 通过从一个Port向另一个Port拖拽可以<b>新建</b>一个Link的<b>外观</b>,
 <br>
