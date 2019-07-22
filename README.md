@@ -85,6 +85,7 @@ class定义中被declare
 <p style="font-size:14px">
 
 <b>1.</b> 默认文件模板：路径固定，用于方便用户编辑所有同类Component/Object
+<br>
  e.g. 用户可以将默认的Monitor模板中的head template block 中加入注释”hello world”则所有生成的monitor文件中的head template block中都会加入”hello world”
 <br>
 <br>
