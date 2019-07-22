@@ -105,7 +105,13 @@ e.g. 如果当前UI中一Component 名为”monitor_1”那么如果在用户指
 (注意在Export前必须先点击Specify a template path，template path可以为空)
 </p>
 
-
+<br>
+<br>
+<h2>UI文件结构</h2>
+<br>
+<br>
+<img src="https://github.com/ruohuali/Cambricon-TestBench-Generator/blob/master/Demo_snapshots/file_structure.gif" align="right" width="400px" height="222px"/>
+<p style="font-size:17px;">生成环境的文件结构大致为：<br>
 
 
 </div>
