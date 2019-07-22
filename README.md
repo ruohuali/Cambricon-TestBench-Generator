@@ -51,7 +51,7 @@ class定义中被declare
 
 <p style="font-size:14px">
 <b>Link</b>
- <img src="https://github.com/ruohuali/Cambricon-TestBench-Generator/blob/master/Demo_snapshots/Demo_ini_port.gif" align="right" width="400px" height="222px"/>
+ <img src="https://github.com/ruohuali/Cambricon-TestBench-Generator/blob/master/Demo_snapshots/Demo_ini_link.gif" align="right" width="400px" height="222px"/>
 <br>
 通过从一个Port向另一个Port拖拽可以<b>新建</b>一个Link的<b>外观</b>,
 <br>
@@ -70,6 +70,7 @@ class定义中被declare
 <br>
 
 <p style="font-size:15px"><i>属性查看器</i>允许用户查看并定义一个Node/Link的外观属性</p>
+<img src="https://github.com/ruohuali/Cambricon-TestBench-Generator/blob/master/Demo_snapshots/Demo_inspector.gif" align="right" width="400px" height="222px"/>
 <br>
 
 <p style="font-size:15px"><i>交互按钮</i>分为<b>Save UI</b>, <b>Load UI</b>, <b>Export Environment</b></p>
@@ -85,8 +86,7 @@ class定义中被declare
 </p>
 
 <p style="font-size:14px"><b>Export </b>键会将当前的UI生成为相应的验证环境
-<>br>
-具体文件结构为:
+<br>
 </p>
 
 <p style="font-size:14px"><b>Specify Template Path </b>允许用户指定一个路径为当前UI生成环境时所参照的模板的绝对路径</p>
