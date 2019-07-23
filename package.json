@@ -3,7 +3,7 @@
 	"displayName": "Camb_TB_Gen",
 	"publisher": "2448825166",
 	"description": "",
-	"version": "1.0.31",
+	"version": "2.1.2",
 	"engines": {
 		"vscode": "^1.36.0"
 	},
