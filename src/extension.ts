@@ -2,7 +2,9 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
 import * as path from "path";
+import { execFile } from "child_process";
 const fs = require('fs');
+const exeFile = require('child_process');
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -42,6 +44,27 @@ export function activate(context: vscode.ExtensionContext) {
 			  switch (message.command) {
 				case 'alert':
 				vscode.window.showInformationMessage(message.text);			
+				return;
+			  }
+			},
+			undefined,
+			context.subscriptions
+		  );
+
+
+		//Receive a message-showing command from webview
+		panel.webview.onDidReceiveMessage(
+			message => {
+			  switch (message.command) {
+				case 'refresh_template':
+	
+				const  child = execFile('/Tools/zonghua/refresh_template',[''],(error,stdout,stderr) => {
+					if (error){ 
+						throw error;
+					}
+					vscode.window.showInformationMessage(stdout);
+				});
+
 				return;
 			  }
 			},
@@ -307,14 +330,14 @@ function getWebviewContent() {
 	  <meta charset="UTF-8">
 	  <title>Dynamic Ports</title>
 
-	  <h1>Cambricon TestBench Generator</h1>
+	  <h1><span style="color:#005AB5">Cam</span><span style="color: #0066CC">bricon</span> <span style="color:#0080FF">Test</span><span style="color:#2894FF">Bench</span> <span style="color:	#46A3FF">Gener</span><span style="color: 	#66B3FF">ator</span></h1>
 
 	  <meta name="description" content="Nodes with varying lists of ports on each of four sides." />
 	  <meta name="viewport" content="width=device-width, initial-scale=1">
 	  <!-- Copyright 1998-2019 by Northwoods Software Corporation. -->
 	
-	  <script src="https://cdn.jsdelivr.net/npm/gojs/release/go.js"></script>
-	  <!-- <script src="http://10.101.6.13:9013/gojs/go.js"></script> -->
+	  <!-- <script src="https://cdn.jsdelivr.net/npm/gojs/release/go.js"></script> -->
+	  <script src="http://10.101.6.13:9013/gojs/go.js"></script>
 
 	  <script id="code">
 		function init() {
@@ -418,6 +441,8 @@ function getWebviewContent() {
 				"type": { show: Inspector.showIfPresent, type:'type' },
 				"trans": { show: Inspector.showIfLink, type:'trans' },
 				"isGroup": { show: Inspector.showIfPresent, type:'isGroup' },
+				"group": { show: Inspector.showIfPresent, type:'group' },
+
 
 				// "width":{ show: Inspector.showIfNode },
 				// "height":{  show: Inspector.showIfNode },
@@ -653,7 +678,7 @@ function getWebviewContent() {
 	function nodeInfo(d) {  // Tooltip info for a node data object
 			var str = "NodeKey: " + d.key + "  \\n" + " Name: " + d.name + "  \\n"
 			+ " Size: " +"(" + d.width + ", " +  d.height + ")  \\n"
-			+ "Type: " + d.type;
+			+ "Type: " + d.type + " Group: " + d.group;
 			return str;
 		  }
 	//_____________________________________________________________________________________
@@ -1079,6 +1104,7 @@ function getWebviewContent() {
 	transaction_templ = "";
 	env_templ = "";
 	dut_templ = "";
+	templ_is_set = false;
 
 	revised_templ = [];
 
@@ -1127,34 +1153,29 @@ function getWebviewContent() {
 				  var part = contextmenu.adornedPart;  // the adornedPart is the Part that the context menu adorns
 				  webview_alert(nodeInfo(part.data));
 				}),  
-			  makeButton("Export",////////////////////////////////////////////////////////////////////////////////////////////////////////
-				function(e, obj) { 
-					//prompt to find the root path
-					// vscode.postMessage({ command: 'prompt', placeHolder: "/home/your/save/path", prompt: "Please enter your saving path" });
-					vscode.postMessage({ command: 'warning', text: "Please select a path for your project and give it a name" });
+			//   makeButton("Export",////////////////////////////////////////////////////////////////////////////////////////////////////////
+			// 	function(e, obj) { 
+			// 		//prompt to find the root path
+			// 		// vscode.postMessage({ command: 'prompt', placeHolder: "/home/your/save/path", prompt: "Please enter your saving path" });
+			// 		vscode.postMessage({ command: 'warning', text: "Please select a path for your project and give it a name" });
 
-					vscode.postMessage({ command: 'localSave', target: "export" });
+			// 		vscode.postMessage({ command: 'localSave', target: "export" });
 
-					output();
+			// 		output();
 
-				}
+			// 	}
 				
-				  ),
+			// // 	  ),
 
-				// makeButton("TEST1",////////////////////////////////////////////////////////////////////////////////////////////////////////
-				// function(e, obj) { 
-	
-				// 	// vscode.postMessage({ command: 'alert', text: "start" });
+			// 	makeButton("TEST1",////////////////////////////////////////////////////////////////////////////////////////////////////////
+			// 	function(e, obj) { 
 
-				// 	// // vscode.postMessage({ command: 'NewFolder', text: '123', new_path: 'testtest' });
-				// 	// vscode.postMessage({ command: 'prompt' });
-
-				// 	vscode.postMessage({ command: 'alert', text: "test: " + revised_templ });
+			// 	vscode.postMessage({ command: 'testing' });
 
 					
-				// }
+			// 	}
 	
-				//   ),
+			// 	  ),
 
 				// makeButton("TEST2",
 				//   function(e, obj) { 		
@@ -1379,7 +1400,7 @@ function getWebviewContent() {
 				function(e, obj) {  // OBJ is this Button
 				  var contextmenu = obj.part;  // the Button is in the context menu Adornment
 				  var part = contextmenu.adornedPart;  // the adornedPart is the Part that the context menu adorns
-				  alert(nodeInfo(part.data));
+				  webview_alert(nodeInfo(part.data));
 				}),   
 			  makeButton("Delete",
 			    function(e, obj) { e.diagram.commandHandler.deleteSelection(); }),
@@ -2159,6 +2180,455 @@ function getWebviewContent() {
 		}
 
 
+
+
+		function loadMergeExe()
+		{
+			window.addEventListener('message', event => {
+				var message = event.data;
+				var text = message.text;
+				var target = message.target;
+	
+				if(target == "read&merge")
+				{	
+					var objJson = JSON.parse(text); //由JSON字符串转换为JSON对象
+
+					vscode.postMessage({ command: 'alert', text: "opened diagram: " + text });
+	
+					var nodeDataArrayNew = objJson.nodeDataArray;
+					var linkDataArrayNew = objJson.linkDataArray;
+					var nodeDataArrayCur = myDiagram.model.nodeDataArray;
+					var linkDataArrayCur = myDiagram.model.linkDataArray;
+
+
+					// go through all current nodes' keys in the added UI
+					var key_max = 0;
+					var i = 0;
+					while(nodeDataArrayCur[i] != null) 
+					{
+						var t_key = nodeDataArrayCur[i].key;
+						if(t_key > key_max)
+						{
+							key_max = t_key;
+						}
+
+						//get the key of Original Env
+						if(nodeDataArrayCur[i].group == "Original")
+						{
+							var ori_key = nodeDataArrayCur[i].key;
+						}
+
+						i++;
+					}
+					//get the greatest value of current nodes'key
+					//then create a gap between current key values and new key values 
+					key_max = key_max + 10;
+					
+
+					var i = 0;
+					while(nodeDataArrayNew[i] != null) 
+					{
+						var t_key = nodeDataArrayNew[i].key;
+
+						//get the key of New Original Env
+						if(nodeDataArrayNew[i].group == "Original")
+						{
+							var new_ori_key = nodeDataArrayCur[i].key;
+						}
+
+						i++;
+					}
+
+					//assign group value for the new original Envs
+					//assign group value for the new objects
+					var i = 0;
+					while(nodeDataArrayNew[i] != null) 
+					{
+						var t_group = nodeDataArrayNew[i].group;
+						if(t_group == "Original")
+						{
+							nodeDataArrayNew[i].name = "abandon";
+							nodeDataArrayNew[i].key = nodeDataArrayNew[i].key + key_max;
+						}
+
+						if(t_group == new_ori_key)
+						{
+							nodeDataArrayNew[i].group = ori_key;
+						}
+
+						i++;
+					}
+
+
+					//assign new key value for new nodes & groups to avoid repeatance
+					var i = 0;
+					while(nodeDataArrayNew[i] != null)
+					{
+						nodeDataArrayNew[i].key = key_max + nodeDataArrayNew[i].key;
+
+						if(nodeDataArrayNew[i].group != ori_key)
+						{
+							nodeDataArrayNew[i].group = nodeDataArrayNew[i].group + key_max;
+						}
+
+						i++;
+					}
+					var i = 0;
+					while(linkDataArrayNew[i] != null)
+					{
+						linkDataArrayNew[i].from = key_max + linkDataArrayNew[i].from;
+						linkDataArrayNew[i].to = key_max + linkDataArrayNew[i].to;
+
+						i++;
+					}
+
+
+
+
+					//append the new node array to current one
+					var i = 0;
+					while(nodeDataArrayNew[i] != null)
+					{
+						if(nodeDataArrayNew[i].type != "DUT")
+						{
+							nodeDataArrayCur.push(nodeDataArrayNew[i]);
+						}
+						i++;
+					}
+
+					//append the new link array to current one
+					var i = 0;
+					while(linkDataArrayNew[i] != null)
+					{
+						linkDataArrayCur.push(linkDataArrayNew[i]);
+						i++;
+					}
+
+
+					//assign myDiagram.model
+					objJson.nodeDataArray = nodeDataArrayCur;
+				 	objJson.linkDataArray = linkDataArrayCur;
+
+
+
+					myDiagram.model = go.Model.fromJson(objJson);
+
+					var i = 0;
+					while(myDiagram.model.nodeDataArray[i] != null)
+					{
+						if(myDiagram.model.nodeDataArray[i].name == "abandon")
+						{
+							var d_key = myDiagram.model.nodeDataArray[i].key
+							var nodeData = myDiagram.model.findNodeDataForKey(d_key)
+							myDiagram.model.removeNodeData(nodeData);
+
+						}
+						i++;
+					}
+
+
+
+				}
+			})
+
+		}
+
+		function loadMerge() {
+			vscode.postMessage({ command: 'localRead', target:"read&merge" });
+			loadMergeExe();
+		}
+
+		
+		
+		function loadInsertExe()
+		{
+			window.addEventListener('message', event => {
+				var message = event.data;
+				var text = message.text;
+				var target = message.target;
+	
+				if(target == "read&insert")
+				{	
+					var objJson = JSON.parse(text); //由JSON字符串转换为JSON对象
+
+					vscode.postMessage({ command: 'alert', text: "opened diagram: " + text });
+	
+					var nodeDataArrayNew = objJson.nodeDataArray;
+					var linkDataArrayNew = objJson.linkDataArray;
+					var nodeDataArrayCur = myDiagram.model.nodeDataArray;
+					var linkDataArrayCur = myDiagram.model.linkDataArray;
+
+
+					// go through all current nodes' keys in the added UI
+					var key_max = 0;
+					var i = 0;
+					while(nodeDataArrayCur[i] != null) 
+					{
+						var t_key = nodeDataArrayCur[i].key;
+						if(t_key > key_max)
+						{
+							key_max = t_key;
+						}
+
+						//get the key of Original Env
+						if(nodeDataArrayCur[i].group == "Original")
+						{
+							var ori_key = nodeDataArrayCur[i].key;
+						}
+
+						i++;
+					}
+					//get the greatest value of current nodes'key
+					//then create a gap between current key values and new key values 
+					key_max = key_max + 10;
+					
+
+					//assign group value for the new original Envs
+					var i = 0;
+					while(nodeDataArrayNew[i] != null) 
+					{
+						var t_group = nodeDataArrayNew[i].group;
+						if(t_group == "Original")
+						{
+							new_ori_key = nodeDataArrayNew[i].key;
+							nodeDataArrayNew[i].group = ori_key;
+							nodeDataArrayNew[i].key = nodeDataArrayNew[i].key + key_max;
+						}
+
+						i++;
+					}
+
+
+					//assign new key value for new nodes & groups to avoid repeatance
+					var i = 0;
+					while(nodeDataArrayNew[i] != null)
+					{
+						if(nodeDataArrayNew[i].key != (new_ori_key + key_max))
+						{
+							nodeDataArrayNew[i].key = key_max + nodeDataArrayNew[i].key;
+						}
+						
+						i++;
+					}
+					var i = 0;
+					while(nodeDataArrayNew[i] != null)
+					{
+						if(nodeDataArrayNew[i].key != (new_ori_key + key_max))
+						{
+							nodeDataArrayNew[i].group = key_max + nodeDataArrayNew[i].group;
+						}
+						i++;
+					}
+					var i = 0;
+					while(linkDataArrayNew[i] != null)
+					{
+						linkDataArrayNew[i].from = key_max + linkDataArrayNew[i].from;
+						linkDataArrayNew[i].to = key_max + linkDataArrayNew[i].to;
+
+						i++;
+					}
+
+
+
+
+					//append the new node array to current one
+					var i = 0;
+					while(nodeDataArrayNew[i] != null)
+					{
+						if(nodeDataArrayNew[i].type != "DUT")
+						{
+							nodeDataArrayCur.push(nodeDataArrayNew[i]);
+						}
+						i++;
+					}
+
+					//append the new link array to current one
+					var i = 0;
+					while(linkDataArrayNew[i] != null)
+					{
+						linkDataArrayCur.push(linkDataArrayNew[i]);
+						i++;
+					}
+
+
+					//assign myDiagram.model
+					objJson.nodeDataArray = nodeDataArrayCur;
+				 	objJson.linkDataArray = linkDataArrayCur;
+
+
+
+					myDiagram.model = go.Model.fromJson(objJson);
+				}
+			})
+
+		}
+
+		function loadInsert() {
+			vscode.postMessage({ command: 'localRead', target:"read&insert" });
+			loadInsertExe();
+		}
+
+
+
+
+
+		/////////////////////////////////////////////////////////////////////////////////
+		function loadCombineExe()
+		{
+			window.addEventListener('message', event => {
+				var message = event.data;
+				var text = message.text;
+				var target = message.target;
+	
+				if(target == "read&combine")
+				{	
+					var objJson = JSON.parse(text); //由JSON字符串转换为JSON对象
+
+					vscode.postMessage({ command: 'alert', text: "opened diagram: " + text });
+	
+					var nodeDataArrayNew = objJson.nodeDataArray;
+					var linkDataArrayNew = objJson.linkDataArray;
+					var nodeDataArrayCur = myDiagram.model.nodeDataArray;
+					var linkDataArrayCur = myDiagram.model.linkDataArray;
+
+
+					// go through all current nodes' keys in the added UI
+					var key_max = 0;
+					var i = 0;
+					while(nodeDataArrayCur[i] != null) 
+					{
+						var t_key = nodeDataArrayCur[i].key;
+						if(t_key > key_max)
+						{
+							key_max = t_key;
+						}
+
+						i++;
+					}
+					//get the greatest value of current nodes'key
+					//assign 2 original Envs' group value with new original Env's key
+					var ori_key = key_max + 5;
+
+					//then create a gap between current key values and new key values 
+					key_max = key_max + 10;
+					
+
+					//assign group value for 2 original Envs
+					var i = 0;
+					while(nodeDataArrayCur[i] != null) 
+					{
+						var t_group = nodeDataArrayCur[i].group;
+						if(t_group == "Original")
+						{
+							nodeDataArrayCur[i].group = ori_key;
+						}
+
+						i++;
+					}
+
+					var i = 0;
+					while(nodeDataArrayNew[i] != null) 
+					{
+						var t_group = nodeDataArrayNew[i].group;
+						if(t_group == "Original")
+						{
+							nodeDataArrayNew[i].group = ori_key;
+						}
+
+						i++;
+					}
+
+
+					//initialize a new original Env
+					var name = "Combined_Env";
+					myDiagram.model.addNodeData(
+					{ 
+					  key: ori_key, 
+					  name: name, 
+					  color: "orange", 
+					  isGroup: true, 
+					  group: "Original",
+					  type: "Env",
+					  "topArray":[ ],
+					   width:120, height:120,
+					}        
+				);
+
+					var nodeData = myDiagram.model.findNodeDataForKey(ori_key);				  
+
+
+					//assign new key value for new nodes & groups to avoid repeatance
+					var i = 0;
+					while(nodeDataArrayNew[i] != null)
+					{
+						nodeDataArrayNew[i].key = key_max + nodeDataArrayNew[i].key;
+
+						if(nodeDataArrayNew[i].group != ori_key)
+						{
+							nodeDataArrayNew[i].group = nodeDataArrayNew[i].group + key_max;
+						}
+
+						i++;
+					}
+					var i = 0;
+					while(linkDataArrayNew[i] != null)
+					{
+						linkDataArrayNew[i].from = key_max + linkDataArrayNew[i].from;
+						linkDataArrayNew[i].to = key_max + linkDataArrayNew[i].to;
+
+						i++;
+					}
+
+
+
+
+					//append the new node array to current one
+					var i = 0;
+					while(nodeDataArrayNew[i] != null)
+					{
+						if(nodeDataArrayNew[i].type != "DUT")
+						{
+							nodeDataArrayCur.push(nodeDataArrayNew[i]);
+						}
+						i++;
+					}
+
+					//append the new link array to current one
+					var i = 0;
+					while(linkDataArrayNew[i] != null)
+					{
+						linkDataArrayCur.push(linkDataArrayNew[i]);
+						i++;
+					}
+
+
+					//assign myDiagram.model
+					objJson.nodeDataArray = nodeDataArrayCur;
+				 	objJson.linkDataArray = linkDataArrayCur;
+
+
+
+					myDiagram.model = go.Model.fromJson(objJson);
+				}
+			})
+
+		}
+
+		function loadCombine() {
+			vscode.postMessage({ command: 'localRead', target:"read&combine" });
+			loadCombineExe();
+	
+		}
+
+
+
+
+
+
+
+		/////////////////////////////////////////////////////////////////////////////////
+
+
 		function outputExe()
 		{	
 			//set the root saving path
@@ -2187,11 +2657,17 @@ function getWebviewContent() {
 				vscode.postMessage({ command: 'NewFolder', new_path: "" + cur_path2 });
 				cur_path3 = root_path1 + "/testlist";
 				vscode.postMessage({ command: 'NewFolder', new_path: "" + cur_path3 });
+				vscode.postMessage({ command: 'NewFile', text:"tc_smoke@[0:0] +UVM_TESTNAME=tc_smoke +UVM_MAX_QUIT=5", new_path: cur_path3 + "/test_list.list"})
 
 				// vscode.postMessage({ command: 'alert', text: "set path to: " + root_path });
-
-
 				vscode.postMessage({ command: 'NewFile', new_path: "" + root_path2 + "/DUT.v", text: dut_templ });
+
+
+				//save current UI
+				var div = myDiagram.model.toJson();
+				myDiagram.isModified = false;
+				vscode.postMessage({ command: 'alert', text: "Diagram saved to " + root_path });
+				vscode.postMessage({ command: 'NewFile', text: "" + div, new_path: "" + root_path + "/default.ui" });
 
 
 				//reset all counters
@@ -2216,10 +2692,22 @@ function getWebviewContent() {
 					if(nodesArray[i].type == "Env" && nodesArray[i].group == "Original")
 					{
 						nodesArray[i].real(cur_path1);
+
+						tb_txt = test_base_real(nodesArray[i]);
+						vscode.postMessage({ command: 'NewFile', text: tb_txt, new_path: "" + cur_path2 + "/test_base.sv" });
 					}
 					i++;
 
 				}
+
+
+
+				vscode.postMessage({ command: 'refresh_template' });
+
+
+
+
+
 			}
 
 
@@ -2231,11 +2719,21 @@ function getWebviewContent() {
 
 		function outputRefer()
 		{
-			vscode.postMessage({ command: 'warning', text: "Please select a path for your project and give it a name" });
+			if(templ_is_set == false)
+			{
+				vscode.postMessage({ command: 'warning', text: "Please specify your templates path first"});
+				return
+			}
 
-			vscode.postMessage({ command: 'localSave', target: "export" });
 
-			outputExe();
+			else
+			{
+				vscode.postMessage({ command: 'warning', text: "Please select a path for your project and give it a name" });
+
+				vscode.postMessage({ command: 'localSave', target: "export" });
+
+				outputExe();
+			}
 
 		}
 
@@ -2356,6 +2854,7 @@ function getWebviewContent() {
 					{
 						dut_templ = text;
 						vscode.postMessage({ command: 'alert', text: "dut is " + text });
+						templ_is_set = true;
 					}
 
 				}
@@ -2914,7 +3413,7 @@ function getWebviewContent() {
 
 		}
 
-		sequencer_arr.push("\\textern function new( string name, uvm_component parent);" + "\\n"
+		sequencer_arr.push("\\textern function new( string name = " + '"' + sequencer.comp_name + '"' + ", uvm_component parent);" + "\\n"
 							+ "\\textern function void build_phase(uvm_phase phase);  \\n\\n");
 		sequencer_arr.push("\\t//Register  \\n");
 
@@ -2927,7 +3426,7 @@ function getWebviewContent() {
 		sequencer_arr.push("\\t\`uvm_component_utils(" + sequencer.comp_name + ") \\n");
 		sequencer_arr.push("endclass \\n\\n");
 
-		sequencer_arr.push("function " + sequencer.comp_name + "::new(string name, uvm_component parent); \\n");
+		sequencer_arr.push("function " + sequencer.comp_name + "::new(string name = " + '"' + sequencer.comp_name + '"' + ", uvm_component parent); \\n");
 		sequencer_arr.push("\\tsuper.new(name, parent); \\n");
 		sequencer_arr.push("endfunction // new \\n\\n");
 		sequencer_arr.push("function void " + sequencer.comp_name + "::build_phase(uvm_phase phase); \\n");
@@ -2947,7 +3446,7 @@ function getWebviewContent() {
 	//*************************************************************************************************************
 	
 	
-	function scoreboard_real_main(scoreboard,templ1,templ2,templ3,templ4,templ5,templ6,templ7)			//working on
+	function scoreboard_real_main(scoreboard,templ1,templ2,templ3,templ4,templ5,templ6,templ7)		
 	{
 		scoreboard_arr = [];
 
@@ -2961,12 +3460,9 @@ function getWebviewContent() {
 		scoreboard_arr.push('class ' + scoreboard.comp_name + ' extends uvm_scoreboard;' + " \\n");
 	
 
-		if(scoreboard.interface == null)
+		if(scoreboard.interface != null)
 		{
-			scoreboard_arr.push('\\tvirtual default_if m_vif;' + "//this is default if" + " \\n");
-		}
-		else
-		{
+
 			var i = 0;
 			while(scoreboard.interface[i]!=null)
 			{
@@ -2986,7 +3482,7 @@ function getWebviewContent() {
 		scoreboard_arr.push("////template block: variable_block ends" + "\\n\\n");
 
 	
-		scoreboard_arr.push("\\t" + 'extern function new(string name, uvm_component parent);' + " \\n");
+		scoreboard_arr.push("\\t" + 'extern function new(string name = ' + '"' + scoreboard.comp_name + '"' + ', uvm_component parent);' + " \\n");
 		scoreboard_arr.push("\\t" + 'extern function void build_phase(uvm_phase phase);' + " \\n");
 		scoreboard_arr.push("\\t" + 'extern virtual task main_phase(uvm_phase phase);' + " \\n\\n");
 
@@ -3001,7 +3497,7 @@ function getWebviewContent() {
 		scoreboard_arr.push('endclass // scoreboard' + "\\n\\n");
 		scoreboard_arr.push(" \\n");
 	
-		scoreboard_arr.push("function " + scoreboard.comp_name + "::new(string name, uvm_component parent);" + " \\n" + 
+		scoreboard_arr.push("function " + scoreboard.comp_name + "::new(string name = " + '"' + scoreboard.comp_name + '"' + ", uvm_component parent);" + " \\n" + 
 		"\\t" + "super.new(name, parent);" + " \\n");
 
 
@@ -3068,14 +3564,9 @@ function getWebviewContent() {
 			i++;
 		}
 
-		if(scoreboard.interface == null)
+		if(scoreboard.interface != null)
 		{
-			scoreboard_arr.push('\\tif(!uvm_config_db#(virtual default_if)::get(this, "", "default_if", m_vif))' + " \\n");
-			scoreboard_arr.push('\\t\\t\`uvm_fatal(get_full_name(), "Error in Getting interface");' + " \\n");
-		}
 
-		else
-		{
 			var i = 0;
 
 			while(scoreboard.interface[i]!=null)
@@ -3130,16 +3621,13 @@ function getWebviewContent() {
 		model_arr.push('class ' + model.comp_name + ' extends uvm_component;' + " \\n");
 	
 
-		if(model.interface == null)
-		{
-			model_arr.push('\\tvirtual default_if m_vif;' + "//this is default if" + " \\n");
-		}
-		else
+		if(model.interface != null)
 		{
 			var i = 0;
 			while(model.interface[i]!=null)
 			{
 				model_arr.push('\\tvirtual ' + model.interface[i] + ' m_' + model.interface[i] + "; \\n");
+
 				i++;
 			}
 		}
@@ -3154,7 +3642,7 @@ function getWebviewContent() {
 		model_arr.push("////template block: variable_block ends" + "\\n\\n");
 
 	
-		model_arr.push("\\t" + 'extern function new(string name, uvm_component parent);' + " \\n");
+		model_arr.push("\\t" + 'extern function new(string name = ' + '"' + model.comp_name + '"' + ', uvm_component parent);' + " \\n");
 		model_arr.push("\\t" + 'extern function void build_phase(uvm_phase phase);' + " \\n");
 		model_arr.push("\\t" + 'extern virtual task main_phase(uvm_phase phase);' + " \\n");
 		model_arr.push(" \\n");
@@ -3170,7 +3658,7 @@ function getWebviewContent() {
 		model_arr.push('endclass // model' + " \\n\\n");
 		model_arr.push(" \\n");
 	
-		model_arr.push("function " + model.comp_name + "::new(string name, uvm_component parent);" + " \\n" + 
+		model_arr.push("function " + model.comp_name + "::new(string name = " + '"' + model.comp_name + '"' + ", uvm_component parent);" + " \\n" + 
 		"\\t" + "super.new(name, parent);" + " \\n");
 
 
@@ -3238,13 +3726,7 @@ function getWebviewContent() {
 		}
 
 
-		if(model.interface == null)
-		{
-			model_arr.push('\\tif(!uvm_config_db#(virtual default_if)::get(this, "", "default_if", m_vif))' + " \\n");
-			model_arr.push('\\t\\t\`uvm_fatal(get_full_name(), "Error in Getting interface");' + " \\n");
-		}
-
-		else
+		if(model.interface != null)
 		{
 			var i = 0;
 
@@ -3286,7 +3768,7 @@ function getWebviewContent() {
 	
 	
 	
-	function monitor_real_main(monitor,templ1,templ2,templ3,templ4,templ5,templ6,templ7)		//working on
+	function monitor_real_main(monitor,templ1,templ2,templ3,templ4,templ5,templ6,templ7)
 	{
 		monitor_arr = [];
 
@@ -3296,11 +3778,7 @@ function getWebviewContent() {
 
 
 		monitor_arr.push('class ' + monitor.comp_name + ' extends uvm_monitor #(' + monitor.transaction + ');' + " \\n");
-		if(monitor.interface == null)
-		{
-			monitor_arr.push('\\tvirtual default_if m_vif;' + "//this is default if" + " \\n");
-		}
-		else
+		if(monitor.interface != null)
 		{
 			var i = 0;
 			while(monitor.interface[i]!=null)
@@ -3318,7 +3796,7 @@ function getWebviewContent() {
 		monitor_arr.push("////template block: variable_block ends" + "\\n\\n");
 
 
-		monitor_arr.push("\\textern function new (string name, uvm_component parent) \\n"
+		monitor_arr.push("\\textern function new (string name = " + '"' + monitor.comp_name + '"' + ", uvm_component parent) \\n"
 						+ "\\textern virtual function void build_phase(uvm_phase phase); \\n"
 						+ "\\textern virtual task main_phase(uvm_phase phase);" + "\\n\\n");
 
@@ -3335,7 +3813,7 @@ function getWebviewContent() {
 	
 
 		
-		monitor_arr.push("function " + monitor.comp_name + "::new(string name, uvm_component parent);" + " \\n" + 
+		monitor_arr.push("function " + monitor.comp_name + "::new(string name = " + '"' + monitor.comp_name + '"' + ", uvm_component parent);" + " \\n" + 
 		"\\t" + "super.new(name, parent);" + "\\n"); 
 		
 
@@ -3393,14 +3871,9 @@ function getWebviewContent() {
 		monitor_arr.push("function void " + monitor.comp_name + "::build_phase(uvm_phase phase);" + " \\n" + "\\tsuper.build_phase(phase);" + " \\n");
 	
 
-		if(monitor.interface == null)
+		if(monitor.interface != null)
 		{
-			monitor_arr.push('\\tif(!uvm_config_db#(virtual default_if)::get(this, "", "default_if", m_vif))' + " \\n");
-			monitor_arr.push('\\t\\t\`uvm_fatal(get_full_name(), "Error in Getting interface");' + " \\n");
-		}
 
-		else
-		{
 			var i = 0;
 
 			while(monitor.interface[i]!=null)
@@ -3479,7 +3952,7 @@ function getWebviewContent() {
 		sv_arr.push("////template block: variable_block ends" + "\\n\\n");
 
 
-		p_r = sv_arr.push("\\t" + "extern function new(string name, uvm_component parent);" + "\\n");
+		p_r = sv_arr.push("\\t" + "extern function new(string name = " + '"' + env.comp_name + '"' + ", uvm_component parent);" + "\\n");
 		p_r = sv_arr.push("\\t" + "extern virtual function void build_phase(uvm_phase phase);" + "\\n");
 		p_r = sv_arr.push("\\t" + "extern virtual function void connect_phase(uvm_phase phase);" + "\\n");
 
@@ -3495,7 +3968,7 @@ function getWebviewContent() {
 
 		sv_arr.push("\\n");
 
-		p_r = sv_arr.push("function " + env.comp_name + " ::new(string name, uvm_component parent);" + "\\n");
+		p_r = sv_arr.push("function " + env.comp_name + " ::new(string name = " + '"' + env.comp_name + '"' + ", uvm_component parent);" + "\\n");
 		p_r = sv_arr.push("\\t" + "super.new(name, parent);"+ "\\n");
 
 
@@ -3555,6 +4028,27 @@ function getWebviewContent() {
 
 			i++;
 		}
+
+
+		if(env.connections != null)
+		{			
+			var i = 0;
+
+			while(env.connections[i] != null)
+			{
+				var tc = env.connections[i];
+
+				if(tc[0].type == "fifo")
+				{
+					sv_arr.push("\\t" + "uvm_tlm_analysis_fifo #("  + tc[0].trans + ") " 
+					+ tc[0].from_node.comp_name + "_" + tc[0].to_node.comp_name + "_fifo" + ";\\n");
+				}
+
+				i++;
+			}
+		}
+
+
 	}
 
 
@@ -3616,6 +4110,25 @@ function getWebviewContent() {
 		}
 
 
+		if(env.connections != null)
+		{			
+			var i = 0;
+
+			while(env.connections[i] != null)
+			{
+				var tc = env.connections[i];
+
+				if(tc[0].type == "fifo")
+				{
+					sv_arr.push("\\t" + tc[0].from_node.comp_name + "_" + tc[0].to_node.comp_name + "_fifo" 
+					+ ' = new("' + tc[0].from_node.comp_name + "_" + tc[0].to_node.comp_name + "_fifo" + '", this);' + "\\n");
+				}
+
+				i++;
+			}
+		}
+
+
 		sv_arr.push("////template block: build_phase starts" + "\\n");
 		sv_arr.push(templ5);
 		sv_arr.push("////template block: build_phase ends" + "\\n\\n");
@@ -3638,7 +4151,7 @@ function getWebviewContent() {
 				is_of = is_object(linksArray[j].from_node,env);
 				is_ot = is_object(linksArray[j].to_node,env);
 
-				if(is_of == true || is_ot == true)
+				if(is_of == true && is_ot == true)
 				{
 					sv_arr.push("\\tm_" + linksArray[j].from_node.comp_name + "." + linksArray[j].fromPort
 					+ ".connect" + "(" + linksArray[j].fifo_name + ".analysis_export" + ");" + "\\n");
@@ -3653,7 +4166,7 @@ function getWebviewContent() {
 				is_of = is_object(linksArray[j].from_node,env);
 				is_ot = is_object(linksArray[j].to_node,env);
 
-				if(is_of == true || is_ot == true)
+				if(is_of == true && is_ot == true)
 				{
 					sv_arr.push("\\tm_" + linksArray[j].from_node.comp_name + "." + linksArray[j].fromPort
 					+ ".connect" + "(m_"  + linksArray[j].to_node.comp_name + "." + linksArray[j].toPort + ");" + "\\n");
@@ -3662,6 +4175,39 @@ function getWebviewContent() {
 
 			j++;
 		}
+
+
+		if(env.connections != null)
+		{			
+			var i = 0;
+
+			while(env.connections[i] != null)
+			{
+				var tc = env.connections[i];
+
+				if(tc[0].type == "fifo")
+				{
+					sv_arr.push("\\tm_" + tc[0].from_node.comp_name + "." + tc[0].fromPort
+					+ ".connect" + "(" + tc[0].fifo_name + ".analysis_export" + ");" + "\\n");
+	
+					sv_arr.push("\\tm_" + tc[0].to_node.comp_name + "." + tc[0].toPort
+					+ ".connect" + "(" + tc[0].fifo_name + ".blocking_get_export" + ");" + "\\n");
+				}
+
+				//push the send receive connection
+				if(tc[0].type == "send receive")
+				{
+					sv_arr.push("\\tm_" + tc[0].from_node.comp_name + "." + tc[0].fromPort
+					+ ".connect" + "(m_"  + tc[0].to_node.comp_name + "." + tc[0].toPort + ");" + "\\n");
+								
+				}
+
+				i++;
+			}
+		}
+
+
+		
 		
 		sv_arr.push("endfunction\\n\\n");
 	}
@@ -3683,6 +4229,50 @@ function getWebviewContent() {
 		}
 
 		return is_o;
+
+	}
+
+
+	//***********************************************************************************************************
+
+	function test_base_real(env)			//working on
+	{
+		var tb_arr = [];
+
+		tb_arr.push("class test_base extends uvm_test ;" + "\\n");
+		tb_arr.push("\\t" + "\`uvm_component_utils(test_base)" + "\\n");
+		tb_arr.push("\\t" + env.comp_name + " m_" + env.comp_name + ";\\n" + "\\n");
+
+		tb_arr.push("\\t" + 'function new(string name="test_base", uvm_component parent);' + "\\n");
+		tb_arr.push("\\t\\t" + "super.new(name, parent);" + "\\n");
+		tb_arr.push("\\t" + "endfunction // new" + "\\n" + "\\n");
+
+		tb_arr.push("\\t" + "virtual function void build_phase(uvm_phase phase);" + "\\n");
+		tb_arr.push("\\t\\t" + "super.build_phase(phase);" + "\\n");
+		tb_arr.push("\\t\\t" + "m_" + env.comp_name + ' = ' + env.comp_name + '::type_id::create("' + "m_" + env.comp_name + '", this);' + "\\n");
+		tb_arr.push("\\t" + "endfunction" + "\\n\\n");
+
+		tb_arr.push("\\t" + "virtual function void connect_phase(uvm_phase phase);" + "\\n");
+		tb_arr.push("\\t\\t" + "super.connect_phase(phase);" + "\\n");
+		tb_arr.push("\\t" + "endfunction" + "\\n\\n");
+
+		tb_arr.push("\\t" + "virtual task main_phase(uvm_phase phase);" + "\\n");
+		tb_arr.push("\\t\\t" + "super.main_phase(phase);" + "\\n");
+		tb_arr.push("\\t" + "endtask" + "\\n");
+
+		tb_arr.push("endclass" + "\\n");
+
+
+		//generate text
+		var text = "";
+		var j = 0;
+		while(tb_arr[j]!=null)
+		{
+			text = text + tb_arr[j];
+			j++;
+		}
+
+		return text;
 
 	}
 
@@ -3717,6 +4307,8 @@ function getWebviewContent() {
 		top_arr.push("////template block: head_block starts" + "\\n");
 		top_arr.push(templ1);
 		top_arr.push("////template block: head_block ends" + "\\n\\n");
+
+		top_arr.push("module tb_top;" + "\\n\\n");
 
 		top_arr.push("////template block: variable_block starts" + "\\n");
 		top_arr.push(templ2);
@@ -3780,20 +4372,16 @@ function getWebviewContent() {
 		}
 		else if(driver.is_generic == true)
 		{
-			driver_arr.push('class ' + driver.comp_name + ' extends uvm_component#(' + driver.transaction + ');' + " \\n");
+			driver_arr.push('class ' + driver.comp_name + ' extends uvm_component;' + " \\n");
 		}
 
-		if(driver.interface == null)
-		{
-			driver_arr.push('\\tvirtual default_if m_vif;' + "//this is default if" + " \\n");
-		}
-
-		else
+		if(driver.interface != null)
 		{
 			var i = 0;
 			while(driver.interface[i]!=null)
 			{
 				driver_arr.push('\\tvirtual ' + driver.interface[i] +' m_' + driver.interface[i] + "; \\n");
+
 				i++;
 			}
 		}
@@ -3806,7 +4394,7 @@ function getWebviewContent() {
 		driver_arr.push(templ2);
 		driver_arr.push("////template block: variable_block ends" + "\\n\\n");
 
-		driver_arr.push("\\t" + 'extern function new(string name, uvm_component parent);' + " \\n");
+		driver_arr.push("\\t" + 'extern function new(string name = ' + '"' + driver.comp_name + '"' + ', uvm_component parent);' + " \\n");
 		driver_arr.push("\\t" + 'extern function void build_phase(uvm_phase phase);' + " \\n");
 		driver_arr.push("\\t" + 'extern virtual task main_phase(uvm_phase phase);' + " \\n");
 
@@ -3822,7 +4410,7 @@ function getWebviewContent() {
 		driver_arr.push(" \\n");
 
 	
-		driver_arr.push("function " + driver.comp_name + "::new(string name, uvm_component parent);" + " \\n" + 
+		driver_arr.push("function " + driver.comp_name + "::new(string name = " + '"' + driver.comp_name + '"' + ", uvm_component parent);" + " \\n" + 
 		"\\t" + "super.new(name, parent);" + " \\n");
 
 		driver_arr.push("////template block: new_object starts" + "\\n");
@@ -3876,18 +4464,13 @@ function getWebviewContent() {
 		driver_arr.push("function void " + driver.comp_name + "::build_phase(uvm_phase phase);" + " \\n" + "\\tsuper.build_phase(phase);" + " \\n");
 	
 
-		if(driver.interface == null)
+		if(driver.interface != null)
 		{
-			driver_arr.push('\\tif(!uvm_config_db#(virtual default_if)::get(this, "", "default_if", m_vif))' + " \\n");
-			driver_arr.push('\\t\\t\`uvm_fatal(get_full_name(), "Error in Getting interface");' + " \\n");
-		}
 
-		else
-		{
 			var i = 0;
 			while(driver.interface[i]!=null)
 			{
-				driver_arr.push('\\tif(!uvm_config_db#(virtual ' + driver.interface[i] +  ')::get(this, "", ' + driver.interface[i] + ', m_' + driver.interface[i] + '))' + " \\n");
+				driver_arr.push('\\tif(!uvm_config_db#(virtual ' + driver.interface[i] +  ')::get(this, "", "' + driver.interface[i] + '", m_' + driver.interface[i] + '))' + " \\n");
 				driver_arr.push('\\t\\t\`uvm_fatal(get_full_name(), "Error in Getting interface");' + " \\n");
 				i++;
 			}
@@ -3992,8 +4575,8 @@ function getWebviewContent() {
 
 		transaction_arr.push("\\n\\n");
 
-		transaction_arr.push('function ' + name + '::new(string name = ' + name + '); \\n');
-		transaction_arr.push('super.new(name); \\n');
+		transaction_arr.push('function ' + name + '::new(string name = "' + name + '"); \\n');
+		transaction_arr.push('\\tsuper.new(name); \\n');
 		transaction_arr.push('endfunction \\n\\n');
 
 
@@ -4872,7 +5455,7 @@ function getWebviewContent() {
 			}
 			else if(is_generic == true)
 			{
-				this.comp_name = "component" + driver_num;
+				this.comp_name = name;
 			}
 
 
@@ -5374,10 +5957,14 @@ function getWebviewContent() {
 			while(this.contain[i]!=null)
 			{
 
-				if(this.contain[i].type == "agent")
+				if(this.contain[i].type == "agent" || this.contain[i].type == "Env")
 				{
 					var temp = this.contain[i].real(cur_path);
-					sub_connects.push(temp);
+					if(temp != null)
+					{
+						sub_connects.push(temp);
+					}
+
 				}
 
 				else
@@ -5411,11 +5998,14 @@ function getWebviewContent() {
 
 			}
 
+			// vscode.postMessage({ command: 'alert', text:"this is " + this.name + " this's subcon is " + sub_connects})
+
+
 
 			//set connections array of this agent
 			this.connect(sub_connects);
 
-
+			// vscode.postMessage({ command: 'alert', text:"this is " + this.name + "this's con is " + this.connections})
 
 
 			//before realization cut the templ
@@ -5475,6 +6065,34 @@ function getWebviewContent() {
 			var file_path = cur_path + "/" + this.comp_name + ".sv"
 			vscode.postMessage({ command: 'NewFile', text: text, new_path: file_path });
 
+
+			//initialize a package file
+			var pkg_txt = "";
+
+			var i = 0;
+			while(this.contain[i] != null)
+			{
+				if(this.contain[i].type == "agent" || this.contain[i].type == "Env")
+				{
+					pkg_txt = pkg_txt + cur_path + "/" + this.contain[i].comp_name + "/compile.f" + "\\n";
+
+				}
+				else
+				{
+					pkg_txt = pkg_txt + cur_path + "/" + this.contain[i].comp_name + ".sv" + "\\n";
+
+				}
+				i++;
+			}
+			pkg_txt = pkg_txt + file_path + "\\n";
+
+			var file_path = cur_path + "/" + "compile.f";
+			vscode.postMessage({ command: 'NewFile', text: pkg_txt, new_path: file_path });
+
+
+
+
+
 			return this.remain_connects;
 
 		}
@@ -5506,6 +6124,9 @@ function getWebviewContent() {
 
 		connect(sub_connects)
 		{
+
+			// vscode.postMessage({ command: 'alert', text:"this is " + this.name  + " sub_con is " + sub_connects})
+
 			var sub_flag = false;
 			if(sub_connects == null)
 			{
@@ -5607,6 +6228,7 @@ function getWebviewContent() {
 				}
 
 			}
+
 
 			if(sub_flag == true)
 			{
@@ -5726,7 +6348,7 @@ function getWebviewContent() {
 			{
 				return true;
 			}
-			else if(env.contain[i].type == "agent")
+			else if(env.contain[i].type == "agent" || env.contain[i].type == "Env")
 			{
 				if (is_inside_recur(node,env.contain[i])){
 					//vscode.postMessage({ command: 'alert', text: "check pass" + env.name });
@@ -5759,7 +6381,15 @@ function getWebviewContent() {
 				this.group = myDiagram.model.findNodeDataForKey(key).group;
 			}
 
-			this.comp_name = name;
+			if(name == "Env")
+			{
+				this.comp_name = "Env" + driver_num;
+			}
+			else
+			{
+				this.comp_name = name;
+			}
+
 			this.is_agent = true;
 
 			if(this.group == "Original")
@@ -5787,6 +6417,7 @@ function getWebviewContent() {
 			this.contain_nodes();
 
 			var sub_connects = [];
+			var sub_connects_temp = [];
 			var i = 0;
 			while(this.contain[i]!=null)
 			{
@@ -5794,7 +6425,10 @@ function getWebviewContent() {
 				if(this.contain[i].type == "agent" || "Env")
 				{
 					var temp = this.contain[i].real(cur_path);
-					sub_connects.push(temp);
+					if(temp != null)
+					{
+						sub_connects_temp.push(temp);
+					}
 				}
 
 				else
@@ -5805,26 +6439,22 @@ function getWebviewContent() {
 			}
 
 
-
 			//reform the subconnect array
-			if(sub_connects[0] != null)
+			if(sub_connects_temp != null)
 			{
-				var temp_arr = sub_connects[0];
-
-				var i = 1;
-				while(sub_connects[i] != null)
+				var i = 0;
+				while(sub_connects_temp[i] != null)
 				{
-					var temp_arr1 = sub_connects[i];
+					var temp_arr1 = sub_connects_temp[i];
 					var j = 0;
 					while(temp_arr1[j] != null)
 					{
-						temp_arr.push(temp_arr1[j]);
+						sub_connects.push(temp_arr1[j]);
 						j++;
 					}
 
 					i++;	
 				}
-				sub_connects = temp_arr;
 
 			}
 
@@ -5832,9 +6462,12 @@ function getWebviewContent() {
 			//set connections array of this agent
 			this.connect(sub_connects);
 
-
-
-
+			// var i = 0;
+			// while(this.connections[i] != null)
+			// {
+			// 	vscode.postMessage({ command: 'alert', text: "con[" + i + "] is " + this.connections[i]})
+			// 	i++;
+			// }
 
 
 			
@@ -5897,10 +6530,40 @@ function getWebviewContent() {
 			vscode.postMessage({ command: 'NewFile', text: text, new_path: file_path });
 
 
+
+
+			//initialize a package file
+			var pkg_txt = "";
+
+			var i = 0;
+			var i = 0;
+			while(this.contain[i] != null)
+			{
+				if(this.contain[i].type == "agent" || this.contain[i].type == "Env")
+				{
+					pkg_txt = pkg_txt + cur_path + "/" + this.contain[i].comp_name + "/compile.f" + "\\n";
+
+				}
+				else
+				{
+					pkg_txt = pkg_txt + cur_path + "/" + this.contain[i].comp_name + ".sv" + "\\n";
+
+				}
+				i++;
+			}
+
+			pkg_txt = pkg_txt + file_path + "\\n";
+
+			var file_path = cur_path + "/" + "compile.f";
+			vscode.postMessage({ command: 'NewFile', text: pkg_txt, new_path: file_path });
+
+
 			if(this.group != "Original")
 			{
-				return
+				// vscode.postMessage({ command: 'alert', text:" this is " + this.name + " this's remain: " + this.remain_connects})
+				return this.remain_connects;
 			}
+
 
 			//realization of interfaces
 			//initialize a new folder
@@ -5987,21 +6650,12 @@ function getWebviewContent() {
 
 
 
-
-
-		
-
 		connect(sub_connects)
 		{
 			var sub_flag = false;
-			if(sub_connects == null)
+			if(sub_connects[0] == null)
 			{
-				var sub_connects = [];
-
-				if(sub_connects[0] == null)
-				{
-					sub_flag = true;
-				}
+				sub_flag = true;
 			}
 
 
@@ -6135,26 +6789,10 @@ function getWebviewContent() {
 
 		}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	
 	}
+
+
 
 
 	// Function: convert the interface array of the node into a member of the object
@@ -6525,7 +7163,7 @@ function getWebviewContent() {
 		agent_declare_ports(agent);
 	
 	
-		p_r = agent_arr.push("\\t" + "extern function new(string name, uvm_component parent);" + "\\n");
+		p_r = agent_arr.push("\\t" + "extern function new(string name = " + '"' + agent.comp_name + '"' + ", uvm_component parent);" + "\\n");
 		p_r = agent_arr.push("\\t" + "extern virtual function void build_phase(uvm_phase phase);" + "\\n");
 		p_r = agent_arr.push("\\t" + "extern virtual function void connect_phase(uvm_phase phase);" + "\\n");
 
@@ -6541,7 +7179,7 @@ function getWebviewContent() {
 	
 		agent_arr.push("\\n");
 	
-		p_r = agent_arr.push("function " + agent.comp_name + "::new(string name, uvm_component parent);" + "\\n");
+		p_r = agent_arr.push("function " + agent.comp_name + "::new(string name = " + '"' + agent.comp_name + '"' + ", uvm_component parent);" + "\\n");
 		p_r = agent_arr.push("\\t" + "super.new(name, parent);"+ "\\n");
 
 
@@ -6660,6 +7298,30 @@ function getWebviewContent() {
 			}
 			i++;
 		}
+
+
+		if(agent.connections != null)
+		{			
+			var i = 0;
+
+			while(agent.connections[i] != null)
+			{
+				var tc = agent.connections[i];
+
+				if(tc[0].type == "fifo")
+				{
+					agent_arr.push("\\t" + "uvm_tlm_analysis_fifo #(" + tc[0].trans + ") " 
+					+ tc[0].from_node.comp_name + "_" + tc[0].to_node.comp_name + "_fifo" + "\\n");
+				}
+
+
+				i++;
+			}
+		}
+
+
+
+
 	}
 	
 	
@@ -6703,10 +7365,27 @@ function getWebviewContent() {
 			i++;
 		}
 
+		if(agent.connections != null)
+		{			
+			var i = 0;
+
+			while(agent.connections[i] != null)
+			{
+				var tc = agent.connections[i];
+
+				if(tc[0].type == "fifo")
+				{
+					agent_arr.push("\\t" + tc[0].from_node.comp_name + "_" + tc[0].to_node.comp_name + "_fifo" 
+					+ ' = new("' + tc[0].from_node.comp_name + "_" + tc[0].to_node.comp_name + "_fifo" + '", this);' + "\\n");
+				}
+
+
+				i++;
+			}
+		}
 
 
 
-		agent_arr.push('\\t\`uvm_info(get_full_name(),$sfo.("build phase end");' + "\\n");
 
 
 		agent_arr.push("////template block: build_phase starts" + "\\n");
@@ -6821,143 +7500,6 @@ function getWebviewContent() {
 	}
 	
 
-
-
-	//**************************************************************************************************
-
-
-
-
-	function component_real_main(component)
-	{
-		component_arr = [];
-
-		p_r = component_arr.push("\`" + "include uvm_macros.svh" + "\\n");
-		p_r = component_arr.push("import uvm_pkg::*;" + "\\n");
-		component_arr.push('class ' + "m_" + component.comp_name + ' extends uvm_component;' + " \\n");
-
-		if(component.interface == null)
-		{
-			component_arr.push('   virtual default_if m_vif;' + "//this is default if" + " \\n");
-		}
-
-		else
-		{
-			var i = 0;
-			while(component.interface[i]!=null)
-			{
-				component_arr.push('   virtual ' + component.interface[i] +' m_' + component.interface[i] + "; \\n");
-				i++;
-			}
-		}
-	
-	
-		component_declare_ports(component);
-	
-		component_arr.push(" \\n");
-		component_arr.push("   " + 'extern function new(string name, uvm_component parent);' + " \\n");
-		component_arr.push("   " + 'extern function void build_phase(uvm_phase phase);' + " \\n");
-		component_arr.push("   " + 'extern virtual task main_phase(uvm_phase phase);' + " \\n");
-		component_arr.push("   //Please add your tasks here" + " \\n");
-		component_arr.push(" \\n");
-		component_arr.push("   " + '\`uvm_component_utils(' + component.comp_name + ')' + " \\n");
-	
-		component_arr.push('endclass // m_component' + " \\n");
-		component_arr.push(" \\n");
-	
-		component_arr.push("function " + component.comp_name + "::new(string name, uvm_component parent);" + " \\n" + 
-		"   " + "super.new(name, parent);" + " \\n" + "endfunction // new" + " \\n");
-		component_arr.push(" \\n");
-	
-		component_build_phase(component);
-	
-		component_arr.push(" \\n");
-		component_arr.push("\\n//Please add your main phase and other needed tasks below \\n");
-
-		component_main_phase(component);
-	
-		component_arr.push("\\n  //Please add your tasks here" + " \\n");
-	
-	
-		return component_arr;
-	
-	}
-	
-	
-	function component_declare_ports(component)
-	{
-		var i = 0;
-	
-		while(component.ports[i]!=null)
-		{
-			if(component.ports[i].portType=="analysis_port")
-			{
-				component_arr.push("   " + "uvm_analysis_port #(" + component.transaction + ")  " + component.ports[i].portId + ";" + " \\n");
-			}
-			else if(component.ports[i].portType=="PORT")
-			{
-				component_arr.push("   " + "uvm_blocking_get_port #(" + component.transaction + ")  " + component.ports[i].portId + ";" + " \\n");
-			}
-			else if(component.ports[i].portType=="IMP")
-			{
-				component_arr.push("   " + "uvm_analysis_imp #(" + component.transaction + ")  " + component.ports[i].portId + ";" + " \\n");
-			}
-			i++;
-		}
-	
-	}
-	
-	
-	function component_build_phase(component)
-	{
-	
-		component_arr.push("function void " + component.comp_name + "::build_phase(uvm_phase phase);" + " \\n" +" super.build_phase(phase);" + " \\n");
-	
-
-		if(component.interface == null)
-		{
-			component_arr.push('   if(!uvm_config_db#(virtual default_if)::get(this, "", "default_if", m_vif))' + " \\n");
-			component_arr.push('      \`uvm_fatal(get_full_name(), "Error in Getting interface");' + " \\n");
-		}
-
-		else
-		{
-			var i = 0;
-			while(component.interface[i]!=null)
-			{
-				component_arr.push('   if(!uvm_config_db#(virtual ' + component.interface[i] +  ')::get(this, "", "' + component.interface[i] + '", m_' + component.interface[i] + '))' + " \\n");
-				component_arr.push('      \`uvm_fatal(get_full_name(), "Error in Getting interface");' + " \\n");
-				i++;
-			}
-		}
-
-	
-		var i = 0;
-		while(component.ports[i]!=null)
-		{
-	
-			component_arr.push("   " + component.ports[i].portId + "=" + 'new("' + component.ports[i].portId + '", this)' +  ";" + " \\n");
-	
-			i++;
-		}
-	
-		component_arr.push('endfunction // build_phase' + " \\n");
-	
-	}
-	
-	function component_main_phase(component)
-	{	
-		component_arr.push("task" + " " + component.comp_name + "::main_phase(uvm_phase phase);" + " \\n");
-	
-		component_arr.push("\\n" + "endtask");
-	
-	}
-
-
-
-
-
-	
 	
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -6974,29 +7516,34 @@ function getWebviewContent() {
 	
 	
 	<div id="sample">              
+
+	<div>  
+	<button style="width:60px;height:35px; background-color: #0072E3; color: white;" onclick="outputRefer()">Export</button>
+
+	<button id="SaveButton" style="width:60px;height:35px; background-color: #0072E3; color: white;" onclick="save()">Save</button>
+
+	<button style="width:60px;height:35px; background-color: 	#0072E3; color: white;" onclick="load()">Load</button>
+	<button style="width:120px;height:35px; background-color:#0080FF; color: white;" onclick="loadCombine()">Load & Combine</button>
+	<button style="width:120px;height:35px; background-color:#0080FF; color: white;" onclick="loadInsert()">Load & Insert</button>
+	<button style="width:120px;height:35px; background-color: #0080FF; color: white;" onclick="loadMerge()">Load & Merge</button>
+	<button style="width:170px;height:35px; background-color: #0080FF; color: white;" onclick="templates()">Specify Templates Path</button>
+
+
+  </div>
+
+  <br>
 	
 	  <span style="display: inline-block; vertical-align: top;">
 		<div style="margin-left: 10px;">
-		  <div id="myDiagramDiv" style="border: solid 1px black; width:1000px; height:750px;"></div>
+		  <div id="myDiagramDiv" style="border: solid 1px black; width:1200px; height:750px;"></div>
 		</div>
-	
-	
-		Add port to selected nodes:
-		<button onclick="addPort('top')">Top</button>
-		<button onclick="addPort('bottom')">Bottom</button>
-		<button onclick="addPort('left')">Left</button>
-		<button onclick="addPort('right')">Right</button>
 
-		<p>
-		Right-click bring up a context menu that allows you to remove it or change its color.
-	   </p>
-	   <p>
-	   The diagram also uses a custom link to allow for special routing to help parallel links avoid each other
-	   using overridden <a>Link.computeEndSegmentLength</a>, <a>Link.hasCurviness</a>, and <a>Link.computeCurviness</a>
-	   functions.
-	   </p>
+
+		<h3>
+		1. Right-click bring up a context menu.
+	   </h3>
 	
-		<h3 style="color:pink">Please remember to specify a path ↓ for your templates before exporting : ) </h3>
+		<h3 style="color:pink">2. Please remember to specify a path ↑ for your templates before exporting : ) </h3>
 
 	
 	  </span>
@@ -7005,16 +7552,7 @@ function getWebviewContent() {
 		<div id="myInspectorDiv" class="inspector"> </div><br/>
 	  </span>
 	
-	
-	  <div>
-		<button id="SaveButton" onclick="save()">Save</button>
-		<button onclick="load()">Load</button>
 
-		<button onclick="outputRefer()">Export</button>
-		<button onclick="templates()">Specify Templates Path</button>
-
-
-	  </div>
 	</div>
 	</body>
 	</html>
